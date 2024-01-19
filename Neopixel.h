@@ -1,4 +1,7 @@
 
+// ************** Includes *****************
+#include <stdint.h>
+
 // ************** Parametros de la tira led *****************
 #define PIXELS_LENGTH 111  // cantidad de leds
 

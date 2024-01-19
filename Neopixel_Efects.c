@@ -25,21 +25,25 @@ volatile uint16_t delay_time=16;
    float corrimiento_angular;
    float angulo_temporal;
 
+
 // efecto de onda senoidal de color c, con 15%offset siempre prendido, espejado respecto del centro 
+uint8_t brain_cicle_intensity(uint16_t angule){
+  angule=angule%360;
+  return brain_table[angule];
+}
+
+//Esto cambiarlo por un vector que realiza un for en loop
 void Efects_sinoidal_breath_c_mirror(struct color c){
-   angulo_temporal=((6.2831853*((uint8_t)value_cicle))/1000); // angulo que varia con el tiempo para todos los pixeles (entre 2PI y 0)
-
-   for(int pix_i=0; pix_i< (PIXELS_LENGTH-1/2) ;pix_i++){ // recorro la mitad de los pixeles
-         corrimiento_angular=pix_i*desfazaje_by_pixel;
-                     // calculo el seno de { 2PI (valor/255) + desfazaje_alineal_del_pixel }
-			value_sin = arm_sin_f32( angulo_temporal +corrimiento_angular);
-			value_sin+=1; // valor entre 0 y 2
-			value_sin= value_sin*0.85 + 0.15*(2); // offset del 15% siempre prendido
-
-         setColor_i(pix_i,c,value_sin/2); // le asigno al pixel i el color seteado escalado en seno
-         mirror(pix_i); // espejado
+   angulo_temporal+=velocity; // angulo temporal de ese frame, se suma la velocidad deseada en grados por frame
+   if(angulo_temporal>360){
+    angulo_temporal-=360;
+   }
+  corrimiento_angular=0; // por pixel
+   for(int pix_i=0; pix_i< ((PIXELS_LENGTH - 1)/2) ;pix_i++){ // recorro la mitad de los pixeles
+      corrimiento_angular+=desfazaje_by_pixel; // a cada pixel se le asigna un pequeño corrimiento para hacer el efecto desplazamiento-barrido de la onda
+      setColor_i(pix_i,c,brain_cicle_intensity(angulo_temporal +corrimiento_angular)); // le asigno al pixel i el color seteado escalado en seno
+      mirror(pix_i); // espejado
 	}
-	value_cicle=fmod( (value_cicle+velocity+1000), 1000) ; // revalsa automaticamente , limitado a 1000
 }
 
 // efecto para colision
