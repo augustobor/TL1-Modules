@@ -89,7 +89,7 @@ struct color getColor(uint8_t number_pixel){
 
 // copia el color del pixel, a su relativo en la parte superior de la tira
 // number_pixel >0 && number_pixel < (PIXELS_LENGTH-1)/2
-void mirror(uint8_t number_pixel) {
+void __mirror(uint8_t number_pixel) {
 	datachain[((PIXELS_LENGTH)-number_pixel)*3]   = datachain[number_pixel*3];
 	datachain[((PIXELS_LENGTH)-number_pixel)*3+1] = datachain[number_pixel*3+1];
 	datachain[((PIXELS_LENGTH)-number_pixel)*3+2] = datachain[number_pixel*3+2];
@@ -98,7 +98,7 @@ void mirror(uint8_t number_pixel) {
 // copia espejada de los colores de la tira led, respecto a PIXELS_LENGTH/2
 void mirror(){
 	for(uint8_t i=0 ; i<(PIXELS_LENGTH-1)/2 ; i++){
-		mirror(i);
+		__mirror(i);
 	}
 }
 

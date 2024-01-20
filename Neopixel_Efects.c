@@ -21,7 +21,7 @@ volatile uint16_t delay_time=16;
 
 // efecto onda senoidal,
    float longitud_de_onda = 40;
-   float desfazaje_by_pixel=6.2831853/ longitud_de_onda;
+   float desfazaje_by_pixel=6.2831853 // longitud_de_onda;
    float corrimiento_angular;
    float angulo_temporal;
 
