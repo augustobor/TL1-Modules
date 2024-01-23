@@ -5,6 +5,7 @@
 
 // ************** Parametros de la tira led *****************
 static uint32_t PIXEL_BITS_LENGTH = PIXELS_LENGTH*24; // cantidad de bits para administrar la tira led
+LPC_GPIO_PORT_type *LPC_GPIO_PORT;
 //**********************************************************
 
 
@@ -27,7 +28,7 @@ static volatile uint32_t update=0;    // habilita la actualizacion cuando es !=0
    // ISR (Systick TIMER)
 void SysTick_Handler(void) {
     if(update){       //Actualizar NEOPIXEL
-        LPC_GPIO_PORT->SET[0] = (1 << 0); //Pin(higth)
+        LPC_GPIO_PORT->SET[0] = 2; //Pin(higth)
         for( ret=WAITSHORT; ret>0; ret-- ); // delay "300ns"
 
         if( datachain[bit_index / 8] & bit_mask[bit_index % 8] ){ //si el bit analizado es 1

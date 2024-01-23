@@ -7,6 +7,13 @@
 // ************** Parametros de la tira led *****************
 #define PIXELS_LENGTH 111  // cantidad de leds
 
+typedef struct {
+    // Otros registros del puerto GPIO
+    uint8_t SET[32];  // Conjunto de registros para establecer bits específicos
+    uint8_t CLR[32];  // Conjunto de registros para establecer bits específicos
+    // Otros registros del puerto GPIO
+} LPC_GPIO_PORT_type;
+
 //************ Estructura de datos de color
    struct color {
       uint8_t g;

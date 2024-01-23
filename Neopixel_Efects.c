@@ -1,5 +1,4 @@
 
-#include "Neopixel.h"
 #include "Neopixel_Efects.h"
 
 
@@ -21,8 +20,8 @@ volatile uint16_t delay_time=16;
 
 // efecto onda senoidal,
    float longitud_de_onda = 40;
-   float desfazaje_by_pixel=6.2831853 // longitud_de_onda;
-   float corrimiento_angular;
+   float desfazaje_by_pixel=6.2831853; // longitud_de_onda;
+   float corrimiento_angular = 0.0;
    float angulo_temporal;
 
 
@@ -32,13 +31,12 @@ uint8_t brain_cicle_intensity(uint16_t angule){
   return brain_table[angule];
 }
 
-//Esto cambiarlo por un vector que realiza un for en loop
 void Efects_sinoidal_breath_c_mirror(struct color c){
    angulo_temporal+=velocity; // angulo temporal de ese frame, se suma la velocidad deseada en grados por frame
    if(angulo_temporal>360){
     angulo_temporal-=360;
    }
-  corrimiento_angular=0; // por pixel
+
    for(int pix_i=0; pix_i< ((PIXELS_LENGTH - 1)/2) ;pix_i++){ // recorro la mitad de los pixeles
       corrimiento_angular+=desfazaje_by_pixel; // a cada pixel se le asigna un pequeño corrimiento para hacer el efecto desplazamiento-barrido de la onda
       setColor_i(pix_i,c,brain_cicle_intensity(angulo_temporal +corrimiento_angular)); // le asigno al pixel i el color seteado escalado en seno
