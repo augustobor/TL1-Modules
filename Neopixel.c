@@ -23,25 +23,25 @@ static volatile uint32_t update=0;    // habilita la actualizacion cuando es !=0
 //***********************
 
 
-// ************** Atencion a Interrupciones Neopixel ******
-   // ISR (Systick TIMER)
-void SysTick_Handler(void) {
-    if(update){       //Actualizar NEOPIXEL
-        LPC_GPIO_PORT->SET[0] = (1 << 0); //Pin(higth)
-        for( ret=WAITSHORT; ret>0; ret-- ); // delay "300ns"
+   // ************** Atencion a Interrupciones Neopixel ******
+      // ISR (Systick TIMER)
+      void SysTick_Handler(void){
+         if(update){       //Actualizar NEOPIXEL
+            LPC_GPIO_PORT->B[3][12] = 1; //Pin(higth) GPIO3[12]
+            for( ret=WAITSHORT; ret>0; ret-- ); // delay "300ns"
 
-        if( datachain[bit_index / 8] & bit_mask[bit_index % 8] ){ //si el bit analizado es 1
-        	for( ret=WAITLONG; ret>0; ret-- ); // delay "500ns"
-        }
+            if( datachain[bit_index / 8] & bit_mask[bit_index % 8] ){ //si el bit analizado es 1
+               for( ret=WAITLONG; ret>0; ret-- ); // delay "500ns"
+            }
 
-        LPC_GPIO_PORT->CLR[0] = (1 <<0);  // Pin(Low)
+            LPC_GPIO_PORT->B[3][12] = 0;  // Pin(Low)
 
-        bit_index= (bit_index+1) % PIXEL_BITS_LENGTH; // analiza el sigueinte bit
-        if(bit_index==0){    //si completo toda la tira terminar
-        update=OFF;
-        }
-    }
-}
+            bit_index= (bit_index+1) % PIXEL_BITS_LENGTH; // analiza el sigueinte bit
+            if(bit_index==0){    //si completo toda la tira terminar
+               update=OFF;
+            }
+         }
+      }
 //***************************************
 
 // ************ INIT mascaras Neopixel ********
@@ -64,9 +64,10 @@ void Neopixel_Init(){
 }
 
 
-// le asigna el color "c", al "number_pixel", escalado en "level"
+// le asigna el color "c", al "number_pixel", escalado en "level" entre 0 a 255
 // numer_pixel entre "0" a "PIXEL_LENGTH-1"
 void setColor_i(uint8_t numer_pixel,struct color c,float level) {
+	level=level/255;
     datachain[numer_pixel*3]  = c.g*level;
     datachain[numer_pixel*3+1]= c.r*level;
     datachain[numer_pixel*3+2]= c.b*level;
@@ -96,7 +97,7 @@ void mirror(uint8_t number_pixel) {
 }
 
 // copia espejada de los colores de la tira led, respecto a PIXELS_LENGTH/2
-void mirror(){
+void mirror_all(){
 	for(uint8_t i=0 ; i<(PIXELS_LENGTH-1)/2 ; i++){
 		mirror(i);
 	}

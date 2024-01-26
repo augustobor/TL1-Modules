@@ -17,10 +17,12 @@ void TouchADC_read(){
 
 	// Wait for conversion complete
 	while(
-	  (Chip_ADC_ReadStatus(LPC_ADC0, ADC_CH1, ADC_DR_DONE_STAT) != SET)
+	  (Chip_ADC_ReadStatus(LPC_ADC0, ADC_CH3, ADC_DR_DONE_STAT) != SET)
 	);
 
-	Chip_ADC_ReadValue(LPC_ADC0, ADC_CH1, &lectura_adc);
+	Chip_ADC_ReadValue(LPC_ADC0, ADC_CH3, &lectura_adc);
+
+	if(lectura_adc>165)lectura_adc-=165;// correccion de piso de ruido
 
 	if(lectura_adc>= triger_value_t1){ // si el valor supera el 50%
 		lectura_adc-=triger_value_t1; //guardo el valor de las siguientes muestras
@@ -40,6 +42,10 @@ void TouchADC_read(){
 	}
 }
 
+// retorna 0 solo si no se presiona ningun tactil
+uint8_t IS_TOUCH(){
+	return (flag_touch_1+flag_touch_2+flag_touch_3+flag_touch_4);
+}
 void TouchADC_Init(){
     /* Config ADC0 sample mode */
     ADC_CLOCK_SETUP_T ADCSetup = {
@@ -59,15 +65,14 @@ void TouchADC_Init(){
 
 	Chip_ADC_SetSampleRate(LPC_ADC0, &ADCSetup, 88000);
 
-	Chip_ADC_EnableChannel(LPC_ADC0, ADC_CH1, ENABLE);
-
+	Chip_ADC_EnableChannel(LPC_ADC0, ADC_CH3, ENABLE);
 
 	// deshabilita el resto de los canales
-    Chip_ADC_Int_SetChannelCmd( LPC_ADC0, ADC_CH1, DISABLE );
+    Chip_ADC_Int_SetChannelCmd( LPC_ADC0, ADC_CH3, DISABLE );
     Chip_ADC_EnableChannel( LPC_ADC0, ADC_CH2, DISABLE );
     Chip_ADC_Int_SetChannelCmd( LPC_ADC0, ADC_CH2, DISABLE );
-    Chip_ADC_EnableChannel( LPC_ADC0, ADC_CH3, DISABLE );
-    Chip_ADC_Int_SetChannelCmd( LPC_ADC0, ADC_CH3, DISABLE );
+    Chip_ADC_EnableChannel( LPC_ADC0, ADC_CH1, DISABLE );
+    Chip_ADC_Int_SetChannelCmd( LPC_ADC0, ADC_CH1, DISABLE );
     Chip_ADC_EnableChannel( LPC_ADC0, ADC_CH4, DISABLE );
     Chip_ADC_Int_SetChannelCmd( LPC_ADC0, ADC_CH4, DISABLE );
 
@@ -83,20 +88,20 @@ void TouchADC_efects(struct color cl, uint8_t radius){
 	if(radius<1){
 		radius=1;
 	}
-	if(flag_touch_1){
-		efect_colision(PIXELS_LENGTH/16,cl,radius);
-		flag_touch_1=OFF;
-	}
-	if(flag_touch_2){
-		efect_colision(PIXELS_LENGTH*3/16,cl,radius);
-		flag_touch_2=OFF;
+	if(flag_touch_4){
+		Efects_colision(PIXELS_LENGTH/16,cl,radius);
+		flag_touch_4=OFF;
 	}
 	if(flag_touch_3){
-		efect_colision(PIXELS_LENGTH*5/16,cl,radius);
+		Efects_colision(PIXELS_LENGTH*3/16,cl,radius);
 		flag_touch_3=OFF;
 	}
-	if(flag_touch_4){
-		efect_colision(PIXELS_LENGTH*7/16,cl,radius);
-		flag_touch_4=OFF;
+	if(flag_touch_2){
+		Efects_colision(PIXELS_LENGTH*5/16,cl,radius);
+		flag_touch_2=OFF;
+	}
+	if(flag_touch_1){
+		Efects_colision(PIXELS_LENGTH*7/16,cl,radius);
+		flag_touch_1=OFF;
 	}
 }
